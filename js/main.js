@@ -5,29 +5,29 @@ const DARK_MODE_KEY = 'darkMode';
 const LAST_TURN_OFF_KEY = 'lastTurnOff';
 const LAST_TURN_ON_KEY = 'lastTurnOn';
 
+
 function toggleDarkMode() {
-    const darkMode = localStorage.getItem(DARK_MODE_KEY) === 'true';
-  
-    if (darkMode) {
-      document.body.style.backgroundColor = '#f5f5f5';
-      toggleButton.textContent = 'Turn off';
-      const lastTurnOn = new Date(localStorage.getItem(LAST_TURN_ON_KEY));
-      message.textContent = `Last turn on: ${formatDate(lastTurnOn)}`;
-  
-      localStorage.setItem(DARK_MODE_KEY, 'false');
-      localStorage.removeItem(LAST_TURN_OFF_KEY);
-    } else {
-      document.body.style.backgroundColor = '#222';
-      toggleButton.textContent = 'Turn on';
-      const lastTurnOff = new Date();
-      message.textContent = `Last turn off: ${formatDate(lastTurnOff)}`;
-  
-      localStorage.setItem(DARK_MODE_KEY, 'true');
-      localStorage.setItem(LAST_TURN_OFF_KEY, lastTurnOff);
-      localStorage.setItem(LAST_TURN_ON_KEY, new Date()); 
-    }
+  const darkMode = localStorage.getItem(DARK_MODE_KEY) === 'true';
+
+  if (darkMode) {
+    document.body.style.backgroundColor = '#f5f5f5';
+    toggleButton.textContent = 'Turn off';
+    const lastTurnOn = new Date(localStorage.getItem(LAST_TURN_ON_KEY));
+    message.textContent = `Last turn on: ${formatDate(lastTurnOn)}`;
+
+    localStorage.setItem(DARK_MODE_KEY, 'false');
+    localStorage.removeItem(LAST_TURN_OFF_KEY);
+  } else {
+    document.body.style.backgroundColor = '#222';
+    toggleButton.textContent = 'Turn on';
+    const lastTurnOff = new Date();
+    message.textContent = `Last turn off: ${formatDate(lastTurnOff)}`;
+
+    localStorage.setItem(DARK_MODE_KEY, 'true');
+    localStorage.setItem(LAST_TURN_OFF_KEY, lastTurnOff);
+    localStorage.setItem(LAST_TURN_ON_KEY, new Date());
   }
-  
+}
 
 function formatDate(date) {
   const options = { 
@@ -44,14 +44,29 @@ function formatDate(date) {
 
 toggleButton.addEventListener('click', toggleDarkMode);
 
-
-if (localStorage.getItem(DARK_MODE_KEY) === 'true') {
-  toggleDarkMode();
-} else {
+function restoreStateFromLocalStorage() {
+  const darkMode = localStorage.getItem(DARK_MODE_KEY) === 'true';
   const lastTurnOff = localStorage.getItem(LAST_TURN_OFF_KEY);
-  if (lastTurnOff) {
-    const lastTurnOffDate = new Date(lastTurnOff);
-    message.textContent = `Last turn off: ${formatDate(lastTurnOffDate)}`;
+  const lastTurnOn = localStorage.getItem(LAST_TURN_ON_KEY);
+
+  if (darkMode) {
+    document.body.style.backgroundColor = '#222';
+    toggleButton.textContent = 'Turn on';
+
+    if (lastTurnOff) {
+      const lastTurnOffDate = new Date(lastTurnOff);
+      message.textContent = `Last turn off: ${formatDate(lastTurnOffDate)}`;
+    }
+  } else {
+    document.body.style.backgroundColor = '#f5f5f5';
+    toggleButton.textContent = 'Turn off';
+
+    if (lastTurnOn) {
+      const lastTurnOnDate = new Date(lastTurnOn);
+      message.textContent = `Last turn on: ${formatDate(lastTurnOnDate)}`;
+    }
   }
 }
 
+// Call restoreStateFromLocalStorage on page load
+document.addEventListener('DOMContentLoaded', restoreStateFromLocalStorage);
